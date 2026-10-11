@@ -1,0 +1,31 @@
+# ═══════════════════════════════════════════════════
+# ms-producto · application.yml (WebClient)
+# Puerto: 8083  |  Schema: catalogo_db (dominio catálogo)
+# Arrancar PRIMERO ms-categoria (puerto 8081).
+# Local: MS_CATEGORIA_URL default localhost.
+# Docker: compose la fija a http://ms-categoria:8081.
+# ═══════════════════════════════════════════════════
+server:
+  port: 8083
+
+spring:
+  application:
+    name: ms-producto
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/${DB_NAME:catalogo_db}?useSSL=false&serverTimezone=UTC
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+# URL de ms-categoria. AppConfig la inyecta con @Value.
+ms:
+  categoria:
+    url: ${MS_CATEGORIA_URL:http://localhost:8081}

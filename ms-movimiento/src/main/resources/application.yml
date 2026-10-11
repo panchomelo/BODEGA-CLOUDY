@@ -1,0 +1,31 @@
+# ═══════════════════════════════════════════════════
+# ms-movimiento · application.yml (WebClient doble)
+# Puerto: 8085  |  Schema: operacion_db (dominio operación)
+# Arrancar PRIMERO ms-producto (8083) y ms-inventario (8084).
+# ═══════════════════════════════════════════════════
+server:
+  port: 8085
+
+spring:
+  application:
+    name: ms-movimiento
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/${DB_NAME:operacion_db}?useSSL=false&serverTimezone=UTC
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+# URLs remotas. AppConfig las inyecta con @Value en 2 beans.
+ms:
+  producto:
+    url: ${MS_PRODUCTO_URL:http://localhost:8083}
+  inventario:
+    url: ${MS_INVENTARIO_URL:http://localhost:8084}

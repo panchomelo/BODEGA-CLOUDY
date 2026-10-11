@@ -1,0 +1,135 @@
+# ═══════════════════════════════════════════════════
+# bodega-cloudy · compose.yml
+# Orquesta mysql:8 + 5 microservicios. Sin gateway/registry
+# (vendrán después). JWT también después.
+#
+# Uso:  docker compose up --build
+# IDE:  cada app corre con defaults localhost (ver yml).
+# ═══════════════════════════════════════════════════
+name: bodega-cloudy
+
+services:
+  mysql:
+    image: mysql:8
+    container_name: bodega-mysql
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - bodega-net
+
+  ms-categoria:
+    build: ./ms-categoria
+    container_name: bodega-categoria
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      DB_HOST: mysql
+      DB_NAME: catalogo_db
+      DB_USER: ${DB_CATALOGO_USER}
+      DB_PASSWORD: ${DB_CATALOGO_PASS}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - bodega-net
+
+  ms-usuario:
+    build: ./ms-usuario
+    container_name: bodega-usuario
+    restart: unless-stopped
+    ports:
+      - "8082:8082"
+    environment:
+      DB_HOST: mysql
+      DB_NAME: identidad_db
+      DB_USER: ${DB_IDENTIDAD_USER}
+      DB_PASSWORD: ${DB_IDENTIDAD_PASS}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - bodega-net
+
+  ms-producto:
+    build: ./ms-producto
+    container_name: bodega-producto
+    restart: unless-stopped
+    ports:
+      - "8083:8083"
+    environment:
+      DB_HOST: mysql
+      DB_NAME: catalogo_db
+      DB_USER: ${DB_CATALOGO_USER}
+      DB_PASSWORD: ${DB_CATALOGO_PASS}
+      MS_CATEGORIA_URL: http://ms-categoria:8081
+    depends_on:
+      mysql:
+        condition: service_healthy
+      ms-categoria:
+        condition: service_started
+    networks:
+      - bodega-net
+
+  ms-inventario:
+    build: ./ms-inventario
+    container_name: bodega-inventario
+    restart: unless-stopped
+    ports:
+      - "8084:8084"
+    environment:
+      DB_HOST: mysql
+      DB_NAME: operacion_db
+      DB_USER: ${DB_OPERACION_USER}
+      DB_PASSWORD: ${DB_OPERACION_PASS}
+      MS_PRODUCTO_URL: http://ms-producto:8083
+    depends_on:
+      mysql:
+        condition: service_healthy
+      ms-producto:
+        condition: service_started
+    networks:
+      - bodega-net
+
+  ms-movimiento:
+    build: ./ms-movimiento
+    container_name: bodega-movimiento
+    restart: unless-stopped
+    ports:
+      - "8085:8085"
+    environment:
+      DB_HOST: mysql
+      DB_NAME: operacion_db
+      DB_USER: ${DB_OPERACION_USER}
+      DB_PASSWORD: ${DB_OPERACION_PASS}
+      MS_PRODUCTO_URL: http://ms-producto:8083
+      MS_INVENTARIO_URL: http://ms-inventario:8084
+    depends_on:
+      mysql:
+        condition: service_healthy
+      ms-producto:
+        condition: service_started
+      ms-inventario:
+        condition: service_started
+    networks:
+      - bodega-net
+
+volumes:
+  mysql-data:
+
+networks:
+  bodega-net:
+    driver: bridge

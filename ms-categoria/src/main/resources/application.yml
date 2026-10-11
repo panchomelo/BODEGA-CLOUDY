@@ -1,0 +1,26 @@
+# ═══════════════════════════════════════════════════
+# ms-categoria · application.yml
+# Puerto: 8081  |  Schema: catalogo_db (dominio catálogo)
+# Local (IDE): defaults localhost + .env del IDE.
+# Docker: compose inyecta DB_HOST=mysql + user/pass.
+# Hibernate crea las tablas (ddl-auto: update).
+# ═══════════════════════════════════════════════════
+server:
+  port: 8081
+
+spring:
+  application:
+    name: ms-categoria
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/${DB_NAME:catalogo_db}?useSSL=false&serverTimezone=UTC
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true

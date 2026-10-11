@@ -1,0 +1,24 @@
+# ═══════════════════════════════════════════════════
+# ms-usuario · application.yml
+# Puerto: 8082  |  Schema: identidad_db (dominio identidad)
+# Sin Spring Security / JWT de momento (se añadirá después).
+# ═══════════════════════════════════════════════════
+server:
+  port: 8082
+
+spring:
+  application:
+    name: ms-usuario
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/${DB_NAME:identidad_db}?useSSL=false&serverTimezone=UTC
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true

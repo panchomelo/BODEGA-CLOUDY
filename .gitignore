@@ -1,0 +1,13 @@
+# Build / runtime
+target/
+*.jar
+*.war
+
+# Secrets locales (credenciales reales)
+.env
+
+# IDE
+.idea/
+.vscode/
+*.iml
+.DS_Store
