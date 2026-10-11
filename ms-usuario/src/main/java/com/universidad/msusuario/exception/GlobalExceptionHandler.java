@@ -30,6 +30,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
+    // Credenciales inválidas en login/refresh → 401 Unauthorized
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<Map<String, String>> handleAuth(InvalidCredentialsException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+    }
+
     // Captura cualquier otra RuntimeException lanzada en el Service
     // (ej. username/email duplicado) → 400 Bad Request
     @ExceptionHandler(RuntimeException.class)

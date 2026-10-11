@@ -2,17 +2,14 @@ package com.universidad.msusuario.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-// ═══════════════════════════════════════════════════
 // DTO de ENTRADA: lo que el cliente envía en el body.
-// Las validaciones viven aquí, no en la entidad.
-// ═══════════════════════════════════════════════════
+// El password viaja en plano por HTTPS y se hashea en el Service.
 @Data
 @Builder
 @NoArgsConstructor
@@ -33,7 +30,4 @@ public class UsuarioRequestDTO {
     @Email(message = "Email inválido")
     @Size(max = 100, message = "Máximo 100 caracteres")
     private String email;
-
-    @Pattern(regexp = "ADMIN|BODEGUERO", message = "Rol debe ser ADMIN o BODEGUERO")
-    private String rol;
 }

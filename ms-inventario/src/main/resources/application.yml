@@ -10,7 +10,7 @@ spring:
   application:
     name: ms-inventario
   datasource:
-    url: jdbc:mysql://${DB_HOST:localhost}:3306/${DB_NAME:operacion_db}?useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/${DB_NAME:operacion_db}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: ${DB_USER:root}
     password: ${DB_PASSWORD:}
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -27,3 +27,7 @@ spring:
 ms:
   producto:
     url: ${MS_PRODUCTO_URL:http://localhost:8083}
+
+# JWT: valida con la copia local del secreto compartido.
+jwt:
+  secret: ${JWT_SECRET:changeme-dev-secret-min-32-chars-1234567890}

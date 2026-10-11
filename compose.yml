@@ -1,10 +1,12 @@
 # ═══════════════════════════════════════════════════
 # bodega-cloudy · compose.yml
-# Orquesta mysql:8 + 5 microservicios. Sin gateway/registry
-# (vendrán después). JWT también después.
+# Orquesta mysql:8 + 5 microservicios con JWT (HS256 compartido).
+# Sin gateway/registry (vendrán después).
 #
 # Uso:  docker compose up --build
 # IDE:  cada app corre con defaults localhost (ver yml).
+# Tras este cambio: docker compose down -v && docker compose up --build
+# (recrea schemas; elimina columna rol de identidad_db).
 # ═══════════════════════════════════════════════════
 name: bodega-cloudy
 
@@ -41,6 +43,9 @@ services:
       DB_NAME: catalogo_db
       DB_USER: ${DB_CATALOGO_USER}
       DB_PASSWORD: ${DB_CATALOGO_PASS}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_ACCESS_EXP: ${JWT_ACCESS_EXP}
+      JWT_REFRESH_EXP: ${JWT_REFRESH_EXP}
     depends_on:
       mysql:
         condition: service_healthy
@@ -58,6 +63,9 @@ services:
       DB_NAME: identidad_db
       DB_USER: ${DB_IDENTIDAD_USER}
       DB_PASSWORD: ${DB_IDENTIDAD_PASS}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_ACCESS_EXP: ${JWT_ACCESS_EXP}
+      JWT_REFRESH_EXP: ${JWT_REFRESH_EXP}
     depends_on:
       mysql:
         condition: service_healthy
@@ -75,6 +83,9 @@ services:
       DB_NAME: catalogo_db
       DB_USER: ${DB_CATALOGO_USER}
       DB_PASSWORD: ${DB_CATALOGO_PASS}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_ACCESS_EXP: ${JWT_ACCESS_EXP}
+      JWT_REFRESH_EXP: ${JWT_REFRESH_EXP}
       MS_CATEGORIA_URL: http://ms-categoria:8081
     depends_on:
       mysql:
@@ -95,6 +106,9 @@ services:
       DB_NAME: operacion_db
       DB_USER: ${DB_OPERACION_USER}
       DB_PASSWORD: ${DB_OPERACION_PASS}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_ACCESS_EXP: ${JWT_ACCESS_EXP}
+      JWT_REFRESH_EXP: ${JWT_REFRESH_EXP}
       MS_PRODUCTO_URL: http://ms-producto:8083
     depends_on:
       mysql:
@@ -115,6 +129,9 @@ services:
       DB_NAME: operacion_db
       DB_USER: ${DB_OPERACION_USER}
       DB_PASSWORD: ${DB_OPERACION_PASS}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_ACCESS_EXP: ${JWT_ACCESS_EXP}
+      JWT_REFRESH_EXP: ${JWT_REFRESH_EXP}
       MS_PRODUCTO_URL: http://ms-producto:8083
       MS_INVENTARIO_URL: http://ms-inventario:8084
     depends_on:
